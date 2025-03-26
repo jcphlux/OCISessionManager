@@ -8,8 +8,7 @@ on:
 
 jobs:
   pyinstaller-build:
-    matrix:
-      os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: <windows-latest, ubuntu-latest, macos-latest>
     steps:
       - name: Create Executable
         uses: sayyid5416/pyinstaller@v1

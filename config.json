@@ -1,0 +1,29 @@
+{
+    "settings": {
+        "showadvancedsettings": false,
+        "connectionmaxretries": 3,
+        "checkconnectioninterval": 10.0,
+        "displayloglevel": "DEBUG",
+        "refreshloginterval": 9.9,
+        "autoscrolllog": true,
+        "autosavedebounceinterval": 2.0
+    },
+    "keypaths": {
+        "privkeypath": "C:/Users/JC087285/.ssh/fedseceng.key",
+        "pubkeypath": ""
+    },
+    "connectionsettings": {
+        "localport": 32220,
+        "targetport": 21,
+        "tenancyoverride": null,
+        "sessionlength": 10795
+    },
+    "ui": {
+        "geometry": "997x612+1135+213",
+        "savedebouncems": 0.5,
+        "theme": "System",
+        "darktilebarcolor": "#1c1c1c",
+        "lighttilebarcolor": "#fafafa",
+        "system_monitor_interval": 5.0
+    }
+}

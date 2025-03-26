@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import platform
 import sys
 import threading
 
@@ -61,23 +62,28 @@ def _debounce_save_config(name: str, value):
 
 
 # Define persistent config path
-APP_NAME = "OCI Connection Manager"
+APP_NAME = "OCI Session Manager"
 CONFIG_FILE = "config.json"
 config: ConfigModel
 _save_timer = None  # Timer for debounce functionality
-app_dir = os.path.abspath(".")  # Default to current directory
 
-# Determine a writable location for the config file
 if hasattr(sys, "_MEIPASS"):
-    # Running as an EXE: Store config in AppData
-    app_dir = os.path.join(os.environ["APPDATA"], APP_NAME)
-    # Ensure the config directory exists
-    os.makedirs(app_dir, exist_ok=True)
+    # Running as an EXE: Store config in platform-specific directories
+    if platform.system() == "Windows":
+        APP_DIR = os.path.join(os.environ["APPDATA"], APP_NAME)
+    else:
+        APP_DIR = os.path.join(os.path.expanduser("~/.config"), APP_NAME)
+else:
+    # Default to current directory for non-EXE runs
+    APP_DIR = os.path.abspath(".")
+
+# Ensure the config directory exists
+os.makedirs(APP_DIR, exist_ok=True)
 
 # Setup logging
-initialize_logging(app_dir)
+initialize_logging(APP_DIR)
 
-_config_path = os.path.join(app_dir, CONFIG_FILE)
+_config_path = os.path.join(APP_DIR, CONFIG_FILE)
 
 
 # Load or create the config

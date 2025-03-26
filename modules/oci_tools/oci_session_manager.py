@@ -93,7 +93,7 @@ class OCISessionManager:
         """
         logging.debug("Loading security token...")
         try:
-            token_file = self.config.security_token_file")
+            token_file = self.config.security_token_file
             if token_file:
                 with open(token_file, "r") as file:
                     self._security_token = file.read().strip()
@@ -122,19 +122,19 @@ class OCISessionManager:
 
     @property
     def region(self):
-        return self.config.region") if self._config else None
+        return self.config.region if self._config else None
 
     @property
     def key_file(self):
-        return self._config.key_file") if self._config else None
+        return self._config.key_file if self._config else None
 
     @property
     def root_tenancy(self):
-        return self._config.tenancy") if self._config else None
+        return self._config.tenancy if self._config else None
 
     @property
     def tenancy(self):
-        return self.config.tenancy") if self._config else None
+        return self.config.tenancy if self._config else None
 
     @property
     def expired(self):

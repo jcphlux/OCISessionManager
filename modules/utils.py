@@ -8,6 +8,8 @@ from uuid import uuid4
 
 from pydantic import FilePath
 
+from modules.config import APP_DIR
+
 
 def script_dir(*paths):
     """
@@ -16,8 +18,7 @@ def script_dir(*paths):
     Returns:
         str: The directory of the current script.
     """
-    root = sys._MEIPASS if hasattr(sys, "_MEIPASS") else os.path.abspath(".")
-    return os.path.join(root, *paths)
+    return os.path.join(APP_DIR, *paths)
 
 
 def image_path(icon_color):
@@ -70,7 +71,7 @@ def random_token():
     return f"{random_chars}{unique_id}"
 
 
-def file_content(file_path:FilePath):
+def file_content(file_path: FilePath):
     """
     Read the content of a file.
 

@@ -24,7 +24,6 @@ jobs:
         with:
           name: OCISessionManager-Windows
           path: dist/OCISessionManager.exe
-
   pyinstaller-build-ubuntu:
     runs-on: ubuntu-latest
     steps:
@@ -43,7 +42,6 @@ jobs:
         with:
           name: OCISessionManager-Ubuntu
           path: dist/OCISessionManager
-
   pyinstaller-build-macos:
     runs-on: macos-latest
     steps:
@@ -62,7 +60,6 @@ jobs:
         with:
           name: OCISessionManager-macOS
           path: dist/OCISessionManager
-
   create-release:
     needs:
       [
@@ -77,19 +74,16 @@ jobs:
         with:
           name: OCISessionManager-Windows
           path: ./release-assets
-
       - name: Download Ubuntu executable
         uses: actions/download-artifact@v3
         with:
           name: OCISessionManager-Ubuntu
           path: ./release-assets
-
       - name: Download macOS executable
         uses: actions/download-artifact@v3
         with:
           name: OCISessionManager-macOS
           path: ./release-assets
-
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:

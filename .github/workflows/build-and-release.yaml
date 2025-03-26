@@ -4,15 +4,46 @@ on:
   push:
     branches:
       - main # Trigger on pushes to the main branch
+  workflow_dispatch: # Allow manual triggering of workflow
 jobs:
-  pyinstaller-build:
-    runs-on: <windows-latest, ubuntu-latest, macos-latest>
+  pyinstaller-build-windows:
+    runs-on: windows-latest
     steps:
-      - name: Versatile PyInstaller
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Versatile PyInstaller (Windows)
         uses: sayyid5416/pyinstaller@v1.8.0
         with:
           python_ver: "3.13"
           spec: "main.py"
           requirements: "requirements.txt"
-          upload_exe_with_name: "OCISessionManager"
+          upload_exe_with_name: "OCISessionManager-Windows"
           options: --onefile --noconsole --strip --clean --name OCISessionManager --add-data "resources;resources" --icon "resources/green_icon.ico"
+
+  pyinstaller-build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Versatile PyInstaller (Ubuntu)
+        uses: sayyid5416/pyinstaller@v1.8.0
+        with:
+          python_ver: "3.13"
+          spec: "main.py"
+          requirements: "requirements.txt"
+          upload_exe_with_name: "OCISessionManager-Ubuntu"
+          options: --onefile --noconsole --strip --clean --name OCISessionManager --add-data "resources:resources" --icon "resources/green_icon.ico"
+
+  pyinstaller-build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Versatile PyInstaller (macOS)
+        uses: sayyid5416/pyinstaller@v1.8.0
+        with:
+          python_ver: "3.13"
+          spec: "main.py"
+          requirements: "requirements.txt"
+          upload_exe_with_name: "OCISessionManager-macOS"
+          options: --onefile --noconsole --strip --clean --name OCISessionManager --add-data "resources:resources" --icon "resources/green_icon.ico"

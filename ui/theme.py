@@ -1,3 +1,4 @@
+import platform
 import time
 from sys import getwindowsversion
 from threading import Event, Thread
@@ -18,7 +19,7 @@ class ThemeManager:
     _theme: Theme = Theme.SYSTEM
     _stop_event: Event = Event()
     _system_theme_thread: Thread = None
-    _theme_key:str = config.ui.model_fields["theme"].json_schema_extra["mapping"]
+    _theme_key: str = config.ui.model_fields["theme"].json_schema_extra["mapping"]
 
     def __init__(self, root: Tk):
         self._root = root
@@ -47,7 +48,6 @@ class ThemeManager:
                 mode = "dark" if self._theme == Theme.DARK else "light"
             self._root.after(10, self._apply_system_theme, mode)
 
-
     def _apply_system_theme(self, mode: str):
         """Apply system theme based on darkdetect."""
         sv_ttk.set_theme(mode, self._root)
@@ -55,6 +55,10 @@ class ThemeManager:
 
     def _apply_theme_to_titlebar(self, mode: str):
         """Apply titlebar color based on the theme (Windows-specific)."""
+        if platform.system() != "Windows":
+            # Skip titlebar customization on non-Windows platforms
+            return
+
         version = getwindowsversion()
         is_dark = mode == "dark"
         if version.major == 10 and version.build >= 22000:
@@ -65,9 +69,7 @@ class ThemeManager:
             )
             pywinstyles.change_header_color(self._root, titlebar_color)
         elif version.major == 10:
-            pywinstyles.change_header_color(
-                self._root, "dark" if is_dark else "normal"
-            )
+            pywinstyles.change_header_color(self._root, "dark" if is_dark else "normal")
             # A hacky way to update the title bar's color on Windows 10 (it doesn't update instantly like on Windows 11)
             self._root.wm_attributes("-alpha", 0.99)
             self._root.wm_attributes("-alpha", 1)

@@ -174,4 +174,4 @@ cython_debug/
 .pypirc
 
 log/
-/test*.py
+# /test*.py

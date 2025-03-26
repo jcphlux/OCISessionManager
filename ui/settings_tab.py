@@ -8,7 +8,7 @@ from interfaces.settings_tab import ISettingsTab
 from interfaces.widgets import IConfigField
 from models.widgets import WidgetInfo
 from modules.config import config
-from ui.widgets import ConfigField, controls_from_model, toggle_advanced_widgets
+from ui.widgets import controls_from_model, toggle_advanced_widgets
 
 
 class SettingsTab(ISettingsTab, Frame):
@@ -77,9 +77,9 @@ class SettingsTab(ISettingsTab, Frame):
         # Pass the scrollable frame instead of self
         self._widgets = controls_from_model(self.scrollable_frame, config)
 
-        advanced_widget:IConfigField = self._widgets["settings"].widget.widgets[
-            "showadvancedsettings"
-        ].widget
+        advanced_widget: IConfigField = (
+            self._widgets["settings"].widget.widgets["showadvancedsettings"].widget
+        )
         advanced_widget.variable.trace_add(
             "write",
             lambda *args: toggle_advanced_widgets(

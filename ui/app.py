@@ -1,6 +1,7 @@
 import logging
+import platform
 import threading
-from tkinter import Tk, messagebox
+from tkinter import PhotoImage, Tk, messagebox
 from tkinter.ttk import Frame, Notebook
 from typing import Tuple
 
@@ -58,18 +59,30 @@ class App(IApp, Frame):
         self.settings_tab = SettingsTab(self)
         self.logging_tab = LoggingTab(self)
 
-
-        # set the icon initially to red
+        # Set the icon initially to red
         self.on_connection_change(False)
 
         self.check_settings_and_disable_connection_tab()
 
         # Initial tray icon setup
-        self.tray_icon = pystray.Icon(
-            "SSHMonitor", self.icon_image, "SSH Monitor", self.menu
-        )
-        self.tray_icon.run_detached()  # Run the tray icon in a separate process
-        self.root.protocol("WM_DELETE_WINDOW", self.hide)  # Hide the window on close
+        if platform.system() in ["Windows", "Linux", "Darwin"]:  # Darwin = macOS
+            try:
+                self.tray_icon = pystray.Icon(
+                    "SSHMonitor", self.icon_image, "SSH Monitor", self.menu
+                )
+                self.tray_icon.run_detached()
+                self.root.protocol(
+                    "WM_DELETE_WINDOW", self.hide
+                )  # Hide the window on close
+            except Exception as e:
+                logging.warning(f"System tray is not supported on this platform: {e}")
+                self.root.protocol(
+                    "WM_DELETE_WINDOW", self.quit
+                )  # Exit the app on close
+        else:
+            logging.warning("System tray is not supported on this platform.")
+            self.root.protocol("WM_DELETE_WINDOW", self.quit)  # Exit the app on close
+
         self.root.after(
             1000, lambda: self.on_connection_change(False)
         )  # Set the initial icon state
@@ -99,9 +112,13 @@ class App(IApp, Frame):
 
     def hide(self):
         """Hide the UI window."""
-        logging.debug("Hiding the UI window.")
-        self.visible = False
-        self.root.withdraw()
+        if self.tray_icon:
+            logging.debug("Hiding the UI window.")
+            self.visible = False
+            self.root.withdraw()
+        else:
+            logging.debug("Tray icon not supported, exiting the application.")
+            self.quit()
 
     def show(self):
         """Show the UI window."""
@@ -144,6 +161,9 @@ class App(IApp, Frame):
         img_path = image_path("green" if connected else "red")
         self.root.iconbitmap(False, img_path)
         self.icon_image = Image.open(img_path)
+
+        img = PhotoImage(file=img_path)
+        self.root.iconphoto(False, img)
 
         if self.tray_icon:
             self.tray_icon.icon = self.icon_image  # Update the tray icon dynamically

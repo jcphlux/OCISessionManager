@@ -4,6 +4,7 @@ from tkinter.ttk import Button, Frame
 
 from interfaces.app import IApp
 from interfaces.connection_tab import IConnectionTab
+from modules.oci_tools.oci_session_manager import OCISessionManager
 
 
 class ConnectionTab(IConnectionTab, Frame):
@@ -21,6 +22,14 @@ class ConnectionTab(IConnectionTab, Frame):
         Frame.__init__(self, app.notebook)
         self._app = app
         self.create_ui()
+
+        config_overrides = {
+            # "region": "us-gov-ashburn-1",
+            "tenancy": "ocid1.tenancy.oc2..aaaaaaaara5nokvjwlgvo2udvxem6psxy7aiqdh5qdl2kla25utbs5yu74eq",
+        }
+        self._conn_mgr = session_mgr = OCISessionManager(
+            "OC2_Test", "us-luke-1", config_overrides=config_overrides
+        )
 
     def create_ui(self):
         """Create the UI elements for the connection tab."""

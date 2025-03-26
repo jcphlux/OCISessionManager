@@ -22,8 +22,7 @@ IF EXIST "c:\dev\upx\upx.exe" (
 REM 5. Build the executable with PyInstaller
 echo Building with default PyInstaller flags...
 call pyinstaller --onefile --noconsole --strip --clean ^
-            %UPX_FLAG% ^
-            --name OCIConnectionManager ^
+            --name OCISessionManager ^
             --add-data "resources;resources" ^
             --icon "resources/green_icon.ico" ^
             main.py

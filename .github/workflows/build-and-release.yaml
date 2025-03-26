@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main # Trigger on pushes to the main branch
-  workflow_dispatch: # Manually trigger the workflow if needed
 
 jobs:
   pyinstaller-build:

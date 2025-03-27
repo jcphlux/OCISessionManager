@@ -12,7 +12,6 @@ jobs:
       - name: Install UPX
         uses: crazy-max/ghaction-upx@v3
         with:
-          version: "5.0.0"
           install-only: true
       - name: Versatile PyInstaller (Windows)
         uses: sayyid5416/pyinstaller@v1.8.0
@@ -28,7 +27,6 @@ jobs:
       - name: Install UPX
         uses: crazy-max/ghaction-upx@v3
         with:
-          version: "5.0.0"
           install-only: true
       - name: Versatile PyInstaller (Ubuntu)
         uses: sayyid5416/pyinstaller@v1.8.0

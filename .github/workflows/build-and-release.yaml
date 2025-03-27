@@ -74,12 +74,25 @@ jobs:
           git tag ${{ env.RELEASE_TAG }}
           git push origin ${{ env.RELEASE_TAG }}
 
-      - name: Generate changelog
+      - name: Generate Markdown changelog
         id: changelog
         run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            RANGE=""
+            HEADER="## 🚀 Initial Release"
+          else
+            RANGE="$LAST_TAG..HEAD"
+            HEADER="## 📦 Changes since [$LAST_TAG](https://github.com/${{ github.repository }}/releases/tag/$LAST_TAG)"
+          fi
+
           echo "CHANGELOG<<EOF" >> $GITHUB_ENV
-          git log -1 --pretty=format:"%h - %s (%an)" >> $GITHUB_ENV
+          echo "$HEADER" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          git log $RANGE --pretty=format:"- %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+
 
       - name: Download Windows artifact
         uses: actions/download-artifact@v4

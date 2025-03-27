@@ -3,22 +3,156 @@ name: Build and Release Tkinter App
 on:
   push:
     branches:
-      - main # Trigger on pushes to the main branch
-  workflow_dispatch: # Manually trigger the workflow if needed
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  pyinstaller-build:
-    matrix:
-      os: [windows-latest, ubuntu-latest, macos-latest]
+  pyinstaller-build-windows:
+    runs-on: windows-latest
+    outputs:
+      arch: ${{ steps.get-arch.outputs.arch }}
     steps:
-      - name: Create Executable
-        uses: sayyid5416/pyinstaller@v1
-        with:
-          python_ver: "3.13"
-          # pyinstaller_ver: '==5.13.2'
-          spec: "main.py"
-          requirements: "requirements.txt"
-          upload_exe_with_name: "My executable"
-          options: --onefile --noconsole --strip --clean --name OCISessionManager --add-data "resources;resources" --icon "resources/green_icon.ico"
-          # spec_options: # any custom arguments you want like: `--debug`
+      - name: Get architecture
+        id: get-arch
+        run: echo "arch=${{ runner.arch }}" >> $GITHUB_OUTPUT
 
+      - name: Install UPX
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          install-only: true
+
+      - name: Build with PyInstaller (Windows)
+        uses: sayyid5416/pyinstaller@v1.8.0
+        with:
+          python_ver: "3.13.2"
+          spec: "OCISessionManager.py"
+          requirements: "requirements.txt"
+          upload_exe_with_name: "OCISessionManager-Windows-${{ steps.get-arch.outputs.arch }}"
+          options: >-
+            --onefile --noconsole --strip --clean
+            --upx-dir "C:\\Program Files\\upx"
+            --add-data "resources;resources"
+            --icon "resources/green_icon.ico"
+
+  pyinstaller-build-ubuntu:
+    runs-on: ubuntu-latest
+    outputs:
+      arch: ${{ steps.get-arch.outputs.arch }}
+    steps:
+      - name: Get architecture
+        id: get-arch
+        run: echo "arch=${{ runner.arch }}" >> $GITHUB_OUTPUT
+
+      - name: Install UPX
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          install-only: true
+
+      - name: Build with PyInstaller (Ubuntu)
+        uses: sayyid5416/pyinstaller@v1.8.0
+        with:
+          python_ver: "3.13.2"
+          spec: "OCISessionManager.py"
+          requirements: "requirements.txt"
+          upload_exe_with_name: "OCISessionManager-Ubuntu-${{ steps.get-arch.outputs.arch }}"
+          options: >-
+            --onefile --noconsole --strip --clean
+            --upx-dir /usr/local/bin
+            --add-data "resources:resources"
+            --icon "resources/green_icon.ico"
+
+  pyinstaller-build-macos:
+    runs-on: macos-latest
+    outputs:
+      arch: ${{ steps.get-arch.outputs.arch }}
+    steps:
+      - name: Get architecture
+        id: get-arch
+        run: echo "arch=$(uname -m)" >> $GITHUB_OUTPUT
+
+      - name: Build with PyInstaller (macOS)
+        uses: sayyid5416/pyinstaller@v1.8.0
+        with:
+          python_ver: "3.13.2"
+          spec: "OCISessionManager.py"
+          requirements: "requirements.txt"
+          upload_exe_with_name: "OCISessionManager-macOS-${{ steps.get-arch.outputs.arch }}"
+          options: >-
+            --onefile --noconsole --strip --clean
+            --add-data "resources:resources"
+            --icon "resources/green_icon.ico"
+
+  create-release:
+    needs:
+      - pyinstaller-build-windows
+      - pyinstaller-build-ubuntu
+      - pyinstaller-build-macos
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set Release Version
+        id: version
+        run: |
+          TAG="v$(date +'%Y.%m.%d.%H%M')"
+          echo "RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Create Git Tag
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git tag ${{ env.RELEASE_TAG }}
+          git push origin ${{ env.RELEASE_TAG }}
+
+      - name: Generate Markdown changelog
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            RANGE=""
+            HEADER="## 🚀 Initial Release"
+          else
+            RANGE="$LAST_TAG..HEAD"
+            HEADER="## 📦 Changes since [$LAST_TAG](https://github.com/${{ github.repository }}/releases/tag/$LAST_TAG)"
+          fi
+
+          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+          echo "$HEADER" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          git log $RANGE --pretty=format:"- %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Archive all platform builds (OS-specific)
+        run: |
+          mkdir release
+          for dir in dist/*; do
+            base=$(basename "$dir")
+
+            if [[ "$base" == *Windows* ]]; then
+              7z a "release/${base}.zip" "$dir/*"
+            else
+              tar -czvf "release/${base}.tar.gz" -C "$dir" .
+            fi
+          done
+
+      - name: Create GitHub Release with Archives
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: Release ${{ env.RELEASE_TAG }}
+          body: |
+            Changes:
+            ${{ env.CHANGELOG }}
+          files: release/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

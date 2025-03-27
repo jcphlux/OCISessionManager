@@ -12,10 +12,10 @@
         "console": "integratedTerminal"
       },
       {
-        "name": "Python Debugger: main",
+        "name": "Python Debugger: OCISessionManager",
         "type": "debugpy",
         "request": "launch",
-        "program": "${workspaceFolder}/main.py",
+        "program": "${workspaceFolder}/OCISessionManager.py",
         "console": "integratedTerminal"
       },
       {

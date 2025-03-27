@@ -1,6 +1,7 @@
 import logging
 import os
 import string
+import subprocess
 import sys
 from random import choices
 from socket import AF_INET, SOCK_STREAM, error, socket
@@ -120,3 +121,21 @@ def is_port_in_use(port):
             # If binding fails, it means the port is in use
             logging.debug(f"Port {port} is in use.")
             return True
+
+
+def cli_installed():
+    """
+    Check if OCI CLI is installed.
+
+    Returns:
+        bool: True if OCI CLI is installed, False otherwise.
+    """
+    try:
+        result = subprocess.run(["oci", "--version"], capture_output=True, text=True)
+        if result.returncode == 0:
+            logging.info(f"OCI CLI version: {result.stdout.strip()}")
+            return True
+        return False
+    except FileNotFoundError:
+        logging.error("OCI CLI not found.")
+        return False

@@ -31,8 +31,6 @@ class OCISessionManager:
             config_overrides (dict, optional): Overrides for the OCI configuration.
         """
         logging.debug("Initializing OCISessionManager...")
-        if not self.cli_installed():
-            raise EnvironmentError("OCI CLI is not installed or accessible.")
 
         self._profile_name = profile_name
         self._region = region
@@ -45,26 +43,6 @@ class OCISessionManager:
         self._auto_renew = False
 
         self._load_profile()
-
-    @staticmethod
-    def cli_installed():
-        """
-        Check if OCI CLI is installed.
-
-        Returns:
-            bool: True if OCI CLI is installed, False otherwise.
-        """
-        try:
-            result = subprocess.run(
-                ["oci", "--version"], capture_output=True, text=True
-            )
-            if result.returncode == 0:
-                logging.info(f"OCI CLI version: {result.stdout.strip()}")
-                return True
-            return False
-        except FileNotFoundError:
-            logging.error("OCI CLI not found.")
-            return False
 
     def _load_profile(self):
         """

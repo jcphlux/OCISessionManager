@@ -26,17 +26,13 @@ requires = [
 
 [tool.briefcase.app.ocisessionmanager.mac]
 universal_build = true
-install_requires = [
-    "tkinter",  # tkinter is included with Python on macOS, but needs to be specified for the build process
-]
-python = "https://www.python.org/ftp/python/3.13.2/python-3.13.2-macos11.pkg"
+support_package = "system"  # Use system Python for macOS; no additional package needed
 requires = [
     "darkdetect",
 ]
 
 [tool.briefcase.app.ocisessionmanager.windows]
-install_requires = ["tkinter"]
-python = "https://www.python.org/ftp/python/3.13.2/python-3.13.2-amd64.exe"
+support_package = "https://github.com/wojiushixiaobai/Python-Embed-Win64/releases/download/3.13.2/python-3.13.2-embed-amd64.zip"
 requires = [
     "darkdetect",
     "pystray",
@@ -44,6 +40,8 @@ requires = [
 ]
 
 [tool.briefcase.app.ocisessionmanager.linux]
+support_package = "system"
+system_requires = ["python3-tk"]
 requires = [
     "pystray",
 ]

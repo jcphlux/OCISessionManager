@@ -17,7 +17,7 @@ jobs:
       - name: Set formatted release version
         id: set
         run: |
-          TAG="v$(date -d "${{ github.run_started_at }}" +'%Y.%m.%d.%H%M')"
+          TAG="v$(date -d "${{ github.run_started_at }}" +'%Y.%m.%d%H%M')"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Using version: $TAG"
 

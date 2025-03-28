@@ -17,7 +17,9 @@ jobs:
       - name: Set formatted release version
         id: set
         run: |
-          TAG="v$(date -d "${{ github.run_started_at }}" +'%Y.%m.%d%H%M')"
+          DATE=$(date -d "${{ github.run_started_at }}" +'%Y.%m.%d')
+          TIME=$(date -d "${{ github.run_started_at }}" +'%H%M')
+          TAG="${DATE}.build${TIME}"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Using version: $TAG"
 
@@ -29,7 +31,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python (non-Linux)
         if: runner.os != 'Linux'
@@ -48,17 +50,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install briefcase
 
-      - name: Create app with version
+      - name: Inject version into pyproject.toml
         run: |
-          briefcase create --version ${{ needs.set-version.outputs.tag }}
+          sed -i 's/^version = ".*"/version = "${{ needs.set-version.outputs.tag }}"/' pyproject.toml
 
-      - name: Build app with version
+      - name: Create app
         run: |
-          briefcase build --version ${{ needs.set-version.outputs.tag }}
+          briefcase create
+
+      - name: Build app
+        run: |
+          briefcase build
 
       - name: Package app (ad-hoc signing)
         run: |
-          briefcase package --adhoc-sign --version ${{ needs.set-version.outputs.tag }}
+          briefcase package --adhoc-sign
 
       - name: Upload packaged app
         uses: actions/upload-artifact@v4

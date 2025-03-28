@@ -21,15 +21,22 @@ requires = [
     "cryptography",
     "pydantic",
     "pydantic-extra-types",
+    "platformdirs",
 ]
 
 [tool.briefcase.app.ocisessionmanager.mac]
 universal_build = true
+install_requires = [
+    "tkinter",  # tkinter is included with Python on macOS, but needs to be specified for the build process
+]
+python = "https://www.python.org/ftp/python/3.13.2/python-3.13.2-macos11.pkg"
 requires = [
     "darkdetect",
 ]
 
 [tool.briefcase.app.ocisessionmanager.windows]
+install_requires = ["tkinter"]
+python = "https://www.python.org/ftp/python/3.13.2/python-3.13.2-amd64.exe"
 requires = [
     "darkdetect",
     "pystray",

@@ -25,6 +25,8 @@ pillow==11.1.0
     # via
     #   -r requirements.in
     #   pystray
+platformdirs==4.3.7
+    # via -r requirements.in
 pycparser==2.22
     # via cffi
 pydantic==2.10.6

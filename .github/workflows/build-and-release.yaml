@@ -18,8 +18,7 @@ jobs:
         id: set
         run: |
           DATE=$(date -d "${{ github.run_started_at }}" +'%Y.%m.%d')
-          TIME=$(date -d "${{ github.run_started_at }}" +'%H%M')
-          TAG="${DATE}.${TIME}"
+          TAG="${DATE}.${github.run_id}"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Using version: $TAG"
 

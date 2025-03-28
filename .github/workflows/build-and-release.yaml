@@ -76,6 +76,7 @@ jobs:
         with:
           name: build-artifacts
           path: dist/*
+          overwrite: true
           if-no-files-found: error
 
   create-release:

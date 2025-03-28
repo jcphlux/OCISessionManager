@@ -1,0 +1,47 @@
+[tool.briefcase]
+project_name = "OCI Session Manager"
+description = "A tool for managing OCI Bastion sessions."
+bundle = "com.phluxapps"
+version = "1.0.0"
+url = "https://github.com/jcphlux/OCISessionManager"
+license.file = "LICENSE"
+author = "JCPhlux"
+author_email = "jc@phluxapps.com"
+icon = "resources/icon"
+
+[tool.briefcase.app.ocisessionmanager]
+formal_name = "OCI Session Manager"
+description = "A tool for managing OCI Bastion sessions."
+sources = ["src/ocisessionmanager"]
+resources = ["ocisessionmanager/resources"]
+requires = [
+    "sv-ttk",
+    "pillow",
+    "oci",
+    "cryptography",
+    "pydantic",
+    "pydantic-extra-types",
+    "platformdirs",
+]
+
+[tool.briefcase.app.ocisessionmanager.mac]
+universal_build = true
+support_package = "system"  # Use system Python for macOS; no additional package needed
+requires = [
+    "darkdetect",
+]
+
+[tool.briefcase.app.ocisessionmanager.windows]
+support_package = "https://github.com/wojiushixiaobai/Python-Embed-Win64/releases/download/3.13.2/python-3.13.2-embed-amd64.zip"
+requires = [
+    "darkdetect",
+    "pystray",
+    "pywinstyles",
+]
+
+[tool.briefcase.app.ocisessionmanager.linux]
+support_package = "system"
+system_requires = ["python3-tk"]
+requires = [
+    "pystray",
+]

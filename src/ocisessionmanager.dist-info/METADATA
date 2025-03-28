@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Briefcase-Version: 0.3.22
+Name: ocisessionmanager
+Formal-Name: OCI Session Manager
+App-ID: com.phluxapps.ocisessionmanager
+Version: 1.0.0
+Home-page: https://github.com/jcphlux/OCISessionManager
+Download-URL: https://github.com/jcphlux/OCISessionManager
+Author: JCPhlux
+Author-email: jc@phluxapps.com
+Summary: A tool for managing OCI Bastion sessions.

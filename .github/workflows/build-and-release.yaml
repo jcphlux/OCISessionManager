@@ -52,7 +52,13 @@ jobs:
 
       - name: Inject version into pyproject.toml
         run: |
-          sed -i 's/^version = ".*"/version = "${{ needs.set-version.outputs.tag }}"/' pyproject.toml
+          VERSION="${{ needs.set-version.outputs.tag }}"
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            sed -i '' "s/^version = \".*\"/version = \"${VERSION}\"/" pyproject.toml
+          else
+            sed -i "s/^version = \".*\"/version = \"${VERSION}\"/" pyproject.toml
+          fi
+
 
       - name: Create app
         run: |

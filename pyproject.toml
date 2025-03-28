@@ -12,6 +12,10 @@ icon = "resources/icon"
 [tool.briefcase.app.ocisessionmanager]
 formal_name = "OCI Session Manager"
 description = "A tool for managing OCI Bastion sessions."
+long_description = """
+OCISessionManager is a system tray tool that manages persistent SSH connections to OCI Bastion hosts.
+It ensures reliable session connectivity and shows connection status via the system tray.
+"""
 sources = ["src/ocisessionmanager"]
 resources = ["ocisessionmanager/resources"]
 requires = [

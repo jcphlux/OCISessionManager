@@ -29,7 +29,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python (non-Linux)
         if: runner.os != 'Linux'
@@ -63,8 +63,9 @@ jobs:
       - name: Upload packaged app
         uses: actions/upload-artifact@v4
         with:
-          name: oci-session-manager-${{ runner.os }}
+          name: build-artifacts
           path: dist/*
+          if-no-files-found: error
 
   create-release:
     needs: [set-version, build]
@@ -104,21 +105,26 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
+          name: build-artifacts
           path: dist
+          merge-multiple: true
 
       - name: Archive each platform without top-level dist/
         run: |
           mkdir release
-          for dir in dist/*; do
-            base=$(basename "$dir")
-            if [[ "$base" == *Windows* ]]; then
-              7z a "release/${base}.zip" "./dist/${base}/*"
+          for file in dist/*; do
+            base=$(basename "$file")
+            name="${base%.*}"
+            ext="${base##*.}"
+
+            if [[ "$ext" == "exe" || "$ext" == "msi" ]]; then
+              zip -j "release/${name}.zip" "$file"
             else
-              tar -czvf "release/${base}.tar.gz" -C "./dist/${base}" .
+              tar -czvf "release/${name}.tar.gz" -C "dist" "$base"
             fi
           done
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release with Archives
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.set-version.outputs.tag }}

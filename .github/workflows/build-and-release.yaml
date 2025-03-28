@@ -38,8 +38,8 @@ jobs:
       - name: Build app
         run: briefcase build
 
-      - name: Package app
-        run: briefcase package
+      - name: Package app (ad-hoc signing)
+        run: briefcase package --adhoc-sign
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

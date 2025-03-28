@@ -1,0 +1,42 @@
+[tool.briefcase]
+project_name = "OCI Session Manager"
+description = "A tool for managing OCI Bastion sessions."
+bundle = "com.phluxapps"
+version = "1.0.0"
+url = "https://github.com/jcphlux/OCISessionManager"
+license.file = "LICENSE"
+author = "JCPhlux"
+author_email = "jc@phluxapps.com"
+icon = "resources/icon"
+
+[tool.briefcase.app.ocisessionmanager]
+formal_name = "OCI Session Manager"
+description = "A tool for managing OCI Bastion sessions."
+sources = ["src/ocisessionmanager"]
+resources = ["ocisessionmanager/resources"]
+requires = [
+    "sv-ttk",
+    "pillow",
+    "oci",
+    "cryptography",
+    "pydantic",
+    "pydantic-extra-types",
+]
+
+[tool.briefcase.app.ocisessionmanager.mac]
+universal_build = true
+requires = [
+    "darkdetect",
+]
+
+[tool.briefcase.app.ocisessionmanager.windows]
+requires = [
+    "darkdetect",
+    "pystray",
+    "pywinstyles",
+]
+
+[tool.briefcase.app.ocisessionmanager.linux]
+requires = [
+    "pystray",
+]

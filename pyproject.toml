@@ -2,7 +2,7 @@
 project_name = "OCI Session Manager"
 description = "A tool for managing OCI Bastion sessions."
 bundle = "com.phluxapps"
-version = "1.0.0"
+version = "0.0.0"
 url = "https://github.com/jcphlux/OCISessionManager"
 license.file = "LICENSE"
 author = "JCPhlux"

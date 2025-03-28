@@ -27,7 +27,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -49,15 +49,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install briefcase
 
-      - name: Inject version into pyproject.toml
+      - name: Set version in pyproject.toml
         run: |
-          VERSION="${{ needs.set-version.outputs.tag }}"
-          if [[ "$RUNNER_OS" == "macOS" ]]; then
-            sed -i '' "s/^version = \".*\"/version = \"${VERSION}\"/" pyproject.toml
-          else
-            sed -i "s/^version = \".*\"/version = \"${VERSION}\"/" pyproject.toml
-          fi
-
+          $version = "2025.3.28.14127668036"
+          if ($env:RUNNER_OS -eq "macOS") {
+            (Get-Content pyproject.toml) -replace '^version = ".*"', "version = `"$version`"" | Set-Content pyproject.toml
+          } else {
+            (Get-Content pyproject.toml) -replace '^version = ".*"', "version = `"$version`"" | Set-Content pyproject.toml
+          }
+        shell: pwsh
 
       - name: Create app
         run: |
